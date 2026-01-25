@@ -31,7 +31,7 @@ jobs:
           cmake: true
           ninja: true
           ccache: true
-          clangtidy: 19.1.1
+          clangtidy: 19
 
       - name: Configure CMake
         run: cmake --preset ${matrix.build_type}
