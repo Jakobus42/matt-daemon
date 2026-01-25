@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }} ${{ matrix.compiler }} ${{matrix.build_type}}
+    name: ${{ matrix.os }}-${{ matrix.compiler }}-${{matrix.build_type}}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -34,10 +34,10 @@ jobs:
           clangtidy: 19
 
       - name: Configure CMake
-        run: cmake --preset ${matrix.build_type}
+        run: cmake --preset ${{ matrix.build_type }}
 
       - name: Build
-        run: cmake --build --preset ${matrix.build_type}
+        run: cmake --build --preset ${{ matrix.build_type }}
 
       - name: Test
-        run: ctest -C ${{matrix.build_type}}
+        run: ctest -C $${{ matrix.build_type }}
