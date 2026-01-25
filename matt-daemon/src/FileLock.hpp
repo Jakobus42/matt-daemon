@@ -8,7 +8,7 @@ namespace matt_daemon {
 
 class FileLock final {
  public:
-  [[nodiscard]] static auto acquire(std::filesystem::path path)
+  [[nodiscard]] static auto Acquire(std::filesystem::path path)
       -> std::expected<FileLock, std::error_code>;
 
   ~FileLock() noexcept;
@@ -26,7 +26,7 @@ class FileLock final {
   explicit FileLock(FileDescriptorType file_desc,
                     std::filesystem::path path) noexcept;
 
-  auto release() noexcept -> void;
+  auto Release() noexcept -> void;
 
   FileDescriptorType file_desc_{kInvalidFd};
   std::filesystem::path path_;
