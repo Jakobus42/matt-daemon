@@ -53,7 +53,7 @@ auto FileLock::operator=(FileLock&& other) noexcept -> FileLock& {
   return *this;
 }
 
-void FileLock::release() noexcept {
+auto FileLock::release() noexcept -> void {
   if (file_desc_ != kInvalidFd) {
     ::flock(file_desc_, LOCK_UN);
     ::close(file_desc_);
