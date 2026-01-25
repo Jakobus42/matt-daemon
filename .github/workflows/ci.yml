@@ -3,6 +3,8 @@ name: CI
 on:
   push:
     branches: [main]
+    tags:
+      - "*-v*"
   pull_request:
 
 jobs:
@@ -13,7 +15,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         compiler: [gcc-14, llvm-19]
-        build_type: [release, debug, asan, tsan, analyze]
+        build_type: [debug, asan, tsan, analyze, release]
     steps:
       - uses: actions/checkout@v4
 
@@ -21,8 +23,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.ccache
-          key: ${{ runner.os }}-${{ runner.compiler }}-${{ runner.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
-          restore-keys: ${{ runner.os }}-${{ runner.compiler }}-${{ runner.build_type }}
+          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}-${{ hashFiles('**/CMakeLists.txt') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
 
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
@@ -41,3 +43,44 @@ jobs:
 
       - name: Test
         run: ctest -C ${{ matrix.build_type }} --test-dir build/${{ matrix.build_type }}
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: gcc-14
+          cmake: true
+          ninja: true
+
+      - name: Build Release
+        run: |
+          cmake --preset release
+          cmake --build --preset release
+
+      - name: Get component
+        id: pkg
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "component=${TAG%-v*}" >> $GITHUB_OUTPUT
+          echo "version=${TAG#*-v}" >> $GITHUB_OUTPUT
+
+      - name: CPack
+        working-directory: build/release
+        run: cpack -D CPACK_COMPONENTS_ALL=${{ steps.pkg.outputs.component }}
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/release/*.deb
+            build/release/*.tar.gz
+          tag_name: ${{ github.ref_name }}
+          name: ${{ steps.pkg.outputs.component }}-${{ steps.pkg.outputs.version }}

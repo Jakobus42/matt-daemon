@@ -35,3 +35,11 @@ endif()
 
 add_subdirectory(matt-daemon-rpc)
 add_subdirectory(matt-daemon)
+
+set(CPACK_GENERATOR "TGZ" "DEB")
+set(CPACK_DEB_COMPONENT_INSTALL ON)
+set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
+set(CPACK_PACKAGE_CONTACT "Jakob Sadjina <jakob.sadjina@icloud.com>")
+set(CPACK_DEBIAN_MATT-DAEMON_PACKAGE_VERSION ${matt-daemon_VERSION})
+set(CPACK_DEBIAN_MATT-DAEMON-RPC_PACKAGE_VERSION ${matt-daemon-rpc_VERSION})
+include(CPack)
