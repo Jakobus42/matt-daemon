@@ -14,7 +14,7 @@
 
 namespace matt_daemon {
 
-[[nodiscard]] auto FileLock::acquire(const std::filesystem::path& path)
+[[nodiscard]] auto FileLock::acquire(std::filesystem::path path)
     -> std::expected<FileLock, std::error_code> {
   // NOLINTNEXTLINE - std::fstream does not expose native handle in c++23
   auto file_desc = ::open(path.c_str(), O_CREAT | O_RDWR | O_CLOEXEC, 0644);
@@ -27,11 +27,12 @@ namespace matt_daemon {
     return std::unexpected{std::error_code{errno, std::generic_category()}};
   }
 
-  return FileLock{file_desc};
+  return FileLock{file_desc, std::move(path)};
 }
 
-FileLock::FileLock(FileDescriptorType file_desc) noexcept
-    : file_desc_{file_desc} {
+FileLock::FileLock(FileDescriptorType file_desc,
+                   std::filesystem::path path) noexcept
+    : file_desc_{file_desc}, path_{std::move(path)} {
 }
 
 FileLock::~FileLock() noexcept {
@@ -39,22 +40,24 @@ FileLock::~FileLock() noexcept {
 }
 
 FileLock::FileLock(FileLock&& other) noexcept
-    : file_desc_{std::exchange(other.file_desc_, kInvalidFd)} {
+    : file_desc_{std::exchange(other.file_desc_, kInvalidFd)},
+      path_{std::move(other.path_)} {
 }
 
 auto FileLock::operator=(FileLock&& other) noexcept -> FileLock& {
   if (this != &other) {
     release();
     file_desc_ = std::exchange(other.file_desc_, kInvalidFd);
+    path_ = std::move(other.path_);
   }
   return *this;
 }
 
 void FileLock::release() noexcept {
   if (file_desc_ != kInvalidFd) {
-    // Release lock but dont delete file (avoids race condition on delete)
     ::flock(file_desc_, LOCK_UN);
     ::close(file_desc_);
+    std::filesystem::remove(path_);
     file_desc_ = kInvalidFd;
   }
 }

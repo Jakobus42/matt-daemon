@@ -7,23 +7,17 @@
 
 using matt_daemon::FileLock;
 
-class FileLockTest : public ::testing::Test {
- protected:
-  void TearDown() override {
-    std::filesystem::remove(kLockPath1);
-    std::filesystem::remove(kLockPath2);
-  }
+namespace {
+constexpr auto kLockPath1 = "/tmp/matt_daemon_test.lock";
+constexpr auto kLockPath2 = "/tmp/matt_daemon_test2.lock";
+}  // namespace
 
-  static constexpr auto kLockPath1 = "/tmp/matt_daemon_test.lock";
-  static constexpr auto kLockPath2 = "/tmp/matt_daemon_test2.lock";
-};
-
-TEST_F(FileLockTest, AcquireSucceeds) {
+TEST(FileLockTest, AcquireSucceeds) {
   auto lock = FileLock::acquire(kLockPath1);
   ASSERT_TRUE(lock.has_value()) << lock.error().message();
 }
 
-TEST_F(FileLockTest, SecondAcquireFails) {
+TEST(FileLockTest, SecondAcquireFails) {
   auto lock1 = FileLock::acquire(kLockPath1);
   ASSERT_TRUE(lock1.has_value()) << lock1.error().message();
 
@@ -32,7 +26,7 @@ TEST_F(FileLockTest, SecondAcquireFails) {
   EXPECT_EQ(lock2.error(), std::errc::resource_unavailable_try_again);
 }
 
-TEST_F(FileLockTest, LockReleasedOnDestruction) {
+TEST(FileLockTest, LockReleasedOnDestruction) {
   {
     auto lock = FileLock::acquire(kLockPath1);
     ASSERT_TRUE(lock.has_value()) << lock.error().message();
@@ -41,7 +35,7 @@ TEST_F(FileLockTest, LockReleasedOnDestruction) {
   EXPECT_TRUE(lock.has_value()) << lock.error().message();
 }
 
-TEST_F(FileLockTest, MoveConstructorTransfersOwnership) {
+TEST(FileLockTest, MoveConstructorTransfersOwnership) {
   auto lock1 = FileLock::acquire(kLockPath1);
   ASSERT_TRUE(lock1.has_value()) << lock1.error().message();
 
@@ -50,7 +44,7 @@ TEST_F(FileLockTest, MoveConstructorTransfersOwnership) {
   EXPECT_FALSE(lock3.has_value());
 }
 
-TEST_F(FileLockTest, MoveAssignmentTransfersOwnership) {
+TEST(FileLockTest, MoveAssignmentTransfersOwnership) {
   auto lock1 = FileLock::acquire(kLockPath1);
   auto lock2 = FileLock::acquire(kLockPath2);
 
@@ -65,8 +59,19 @@ TEST_F(FileLockTest, MoveAssignmentTransfersOwnership) {
   EXPECT_FALSE(lock4.has_value());
 }
 
-TEST_F(FileLockTest, MovedFromObjectSafeToDestroy) {
+TEST(FileLockTest, MovedFromObjectSafeToDestroy) {
   auto lock1 = FileLock::acquire(kLockPath1);
   ASSERT_TRUE(lock1.has_value()) << lock1.error().message();
   FileLock lock2{std::move(*lock1)};
+}
+
+// This is a subject requirement:
+// When the daemon shuts down, the matt_daemon.lock file must be deleted
+TEST(FileLockTest, FileDeletedOnRelease) {
+  {
+    auto lock = FileLock::acquire(kLockPath1);
+    ASSERT_TRUE(lock.has_value()) << lock.error().message();
+    EXPECT_TRUE(std::filesystem::exists(kLockPath1));
+  }
+  EXPECT_FALSE(std::filesystem::exists(kLockPath1));
 }
