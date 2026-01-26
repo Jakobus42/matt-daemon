@@ -33,4 +33,5 @@ if(MATT_DAEMON_BUILD_TESTS)
   enable_testing()
 endif()
 
+add_subdirectory(matt-daemon-rpc)
 add_subdirectory(matt-daemon)
