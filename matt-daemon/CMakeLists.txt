@@ -1,3 +1,5 @@
+project(matt-daemon VERSION 0.0.1)
+
 add_library(${PROJECT_NAME}-lib OBJECT)
 
 # note: cmake-format currently does not support FILE_SET in target_source. will
@@ -19,8 +21,8 @@ set_target_properties(${PROJECT_NAME}-lib
                       PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
 
 target_compile_features(${PROJECT_NAME}-lib PUBLIC cxx_std_23)
-target_link_libraries(${PROJECT_NAME}-lib PUBLIC ${PROJECT_NAME}-rpc
-                                                 ${PROJECT_NAME}_options)
+target_link_libraries(${PROJECT_NAME}-lib PUBLIC matt-daemon::rpc
+                                                 matt-daemon_options)
 matt_daemon_apply_static_analyses(${PROJECT_NAME}-lib)
 
 add_executable(${PROJECT_NAME})
@@ -33,4 +35,5 @@ if(MATT_DAEMON_BUILD_TESTS)
 endif()
 
 include(GNUInstallDirs)
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+                                        COMPONENT ${PROJECT_NAME})
