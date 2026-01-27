@@ -5,9 +5,8 @@
 
 namespace matt_daemon_rpc {
 
-inline auto foo() -> int {
-  std::print("Hello World!\n");
-  return 1;
+inline auto foo() -> void {
+  std::print("Hello from matt-daemon-rpc/foo.hpp!\n");
 }
 
 }  // namespace matt_daemon_rpc
