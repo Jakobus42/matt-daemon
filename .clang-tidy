@@ -1,4 +1,4 @@
-Checks: "*,-fuchsia-*,-zircon-*,-abseil-*,-llvm-*,-llvmlibc-*,-modernize-use-trailing-return-type"
+Checks: "*,-fuchsia-*,-zircon-*,-abseil-*,-llvm-*,-llvmlibc-*"
 WarningsAsErrors: "*"
 HeaderFilterRegex: '.*'
 FormatStyle: none

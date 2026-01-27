@@ -8,7 +8,6 @@ target_link_libraries(
   ${PROJECT_NAME} PRIVATE matt-daemon::rpc matt-daemon::interface
                           matt-daemon::options)
 
-target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_23)
 matt_daemon_apply_static_analyses(${PROJECT_NAME})
 
 include(GNUInstallDirs)
