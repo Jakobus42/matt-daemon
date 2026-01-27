@@ -19,9 +19,11 @@ target_sources(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME}
                       PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
 
-target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_23)
-target_link_libraries(${PROJECT_NAME} INTERFACE matt-daemon_options)
-matt_daemon_apply_static_analyses(${PROJECT_NAME})
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_26)
+target_compile_options(${PROJECT_NAME}
+  INTERFACE
+    -freflection-latest # https://github.com/bloomberg/clang-p2996/blob/p2996/P2996.md
+)
 
 target_include_directories(
   ${PROJECT_NAME}
