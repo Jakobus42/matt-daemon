@@ -1,8 +1,9 @@
 {
     "name": "Clang-p2996 Dev",
-    // currently this image does not build clang-tools-extra so clangd, clang-tidy, ... wont work for now.
-    // this will be fixed after https://github.com/mgerhold/clang-p2996-docker-image/pull/1 is merged.
-    // alternativly we could publish my fork of the image or just copy the Dockerfile
-    "image": "ghcr.io/mgerhold/clang-p2996:latest",
-    "postCreateCommand": "cmake --preset debug"
+    "image": "ghcr.io/jakobus42/clang-p2996-dev:latest",
+    "postCreateCommand": "cmake --preset debug",
+    "remoteEnv": {
+        "CC": "/usr/src/clang-p2996/build/bin/clang",
+        "CXX": "/usr/src/clang-p2996/build/bin/clang++"
+    }
 }
