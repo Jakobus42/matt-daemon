@@ -8,13 +8,15 @@ on:
 
 env:
     CMAKE_CXX_COMPILER_LAUNCHER: ccache
+    CC: /usr/src/clang-p2996/build/bin/clang
+    CXX: /usr/src/clang-p2996/build/bin/clang++
 
 jobs:
     build:
         name: matt-daemon-clang-p2996-${{ matrix.build_type }}
         runs-on: ubuntu-latest
         container:
-            image: ghcr.io/mgerhold/clang-p2996:latest
+            image: ghcr.io/jakobus42/clang-p2996-dev:latest
         strategy:
             matrix:
                 build_type: [debug, asan, tsan, analyze, release]
@@ -41,7 +43,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         runs-on: ubuntu-latest
         container:
-            image: ghcr.io/mgerhold/clang-p2996:latest
+            image: ghcr.io/jakobus42/clang-p2996-dev:latest
         permissions:
             contents: write
         steps:
