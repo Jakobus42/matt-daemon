@@ -1,0 +1,25 @@
+{
+  "name": "Clang-p2996 Dev",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "postCreateCommand": "cmake --preset debug",
+  "remoteEnv": {
+    "CC": "/usr/src/clang-p2996/build/bin/clang",
+    "CXX": "/usr/src/clang-p2996/build/bin/clang++"
+  },
+
+  "remoteUser": "dev",
+  "updateRemoteUserUID": true,
+
+  "mounts": [
+    "source=${localEnv:HOME}/.config/helix,target=/home/dev/.config/helix,type=bind",
+
+    // Because nixos is **special**
+    "source=/nix/store,target=/nix/store,type=bind,consistency=cached,readonly"
+  ],
+
+  "containerEnv": {
+    "HELIX_RUNTIME": "/usr/local/lib/helix"
+  }
+}
