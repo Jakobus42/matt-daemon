@@ -19,7 +19,10 @@ jobs:
             image: ghcr.io/jakobus42/clang-p2996-dev:latest
         strategy:
             matrix:
-                build_type: [debug, asan, tsan, analyze, release]
+                # somehow tsan and asan dont work because linker cant find libclang_rt.tsan_cxx.a
+                # and libclang_rt.asan_cxx.a.
+                # this would have to be fixed in ghcr.io/jakobus42/clang-p2996-dev:latest
+                build_type: [debug, analyze, release]
         steps:
             - uses: actions/checkout@v4
 
