@@ -21,9 +21,9 @@ set_target_properties(${PROJECT_NAME}-lib
                       PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
 
 target_compile_features(${PROJECT_NAME}-lib PUBLIC cxx_std_23)
-target_link_libraries(${PROJECT_NAME}-lib PUBLIC matt-daemon::rpc
-                                                 matt-daemon_options)
-matt_daemon_apply_static_analyses(${PROJECT_NAME}-lib)
+target_link_libraries(
+  ${PROJECT_NAME}-lib PUBLIC matt-daemon::rpc matt-daemon::interface
+                             matt-daemon::options)
 
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE src/main.cpp)
