@@ -4,11 +4,6 @@
     "dockerfile": "Dockerfile"
   },
   "postCreateCommand": "cmake --preset debug",
-  "remoteEnv": {
-    "CC": "/usr/src/clang-p2996/build/bin/clang",
-    "CXX": "/usr/src/clang-p2996/build/bin/clang++"
-  },
-
   "remoteUser": "dev",
   "updateRemoteUserUID": true,
 

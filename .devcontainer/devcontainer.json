@@ -1,9 +1,5 @@
 {
     "name": "Clang-p2996 Dev",
     "image": "ghcr.io/jakobus42/clang-p2996-dev:latest",
-    "postCreateCommand": "cmake --preset debug",
-    "remoteEnv": {
-        "CC": "/usr/src/clang-p2996/build/bin/clang",
-        "CXX": "/usr/src/clang-p2996/build/bin/clang++"
-    }
+    "postCreateCommand": "cmake --preset debug"
 }
