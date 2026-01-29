@@ -17,7 +17,6 @@ target_sources(${PROJECT_NAME}
 )
 # cmake-format: on
 
-target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_23)
 set_target_properties(${PROJECT_NAME} PROPERTIES VERIFY_INTERFACE_HEADER_SETS
                                                  ON)
 

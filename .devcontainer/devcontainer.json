@@ -1,0 +1,5 @@
+{
+    "name": "Clang-p2996 Dev",
+    "image": "ghcr.io/jakobus42/clang-p2996-dev:latest",
+    "postCreateCommand": "cmake --preset debug"
+}
