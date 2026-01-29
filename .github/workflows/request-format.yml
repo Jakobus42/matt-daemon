@@ -4,6 +4,11 @@ on:
   issue_comment:
     types: [ created ]
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
 jobs:
   format:
     if: github.event.issue.pull_request && startsWith(github.event.comment.body, 'run-format') && (github.actor == 'ifaoji' || github.actor == 'Jakobus42')
