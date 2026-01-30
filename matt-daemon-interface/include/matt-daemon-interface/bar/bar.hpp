@@ -1,13 +1,13 @@
 #ifndef MATT_DAEMON_INTERFACE_BAR_BAR
 #define MATT_DAEMON_INTERFACE_BAR_BAR
 
-#include <print>
+#include <matt-daemon-rpc/foo.hpp>
 
 namespace matt_daemon_interface::bar {
 
-inline auto bar() -> void {
-  std::print("Hello from matt-daemon-interface/bar.hpp\n");
-}
+struct[[= matt_daemon_rpc::service]] BarService {
+  [[= matt_daemon_rpc::callable]] auto GetSomeStuff(int aaa) -> void;
+};
 
 }  // namespace matt_daemon_interface::bar
 

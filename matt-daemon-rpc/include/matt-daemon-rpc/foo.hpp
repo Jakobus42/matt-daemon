@@ -1,13 +1,21 @@
 #ifndef MATT_DAEMON_RPC_FOO
 #define MATT_DAEMON_RPC_FOO
 
-#include <print>
+#include <cstdint>
 
 namespace matt_daemon_rpc {
 
-inline auto foo() -> void {
-  std::print("Hello from matt-daemon-rpc/foo.hpp!\n");
-}
+struct service_t {};
+constexpr service_t service;
+
+struct callable_t {};
+constexpr callable_t callable;
+
+struct async_t {};
+constexpr async_t async;
+
+struct subscribable_t {};
+constexpr subscribable_t subscribeable;
 
 }  // namespace matt_daemon_rpc
 
