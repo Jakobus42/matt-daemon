@@ -12,14 +12,15 @@ target_sources(${PROJECT_NAME}
     FILE_SET HEADERS
     BASE_DIRS include
     FILES
-      include/matt-daemon-interface/foo/foo.hpp
-      include/matt-daemon-interface/bar/bar.hpp
+      include/matt-daemon-interface/example/example.hpp
 )
 # cmake-format: on
 
 set_target_properties(${PROJECT_NAME} PROPERTIES VERIFY_INTERFACE_HEADER_SETS
                                                  ON)
-
+target_link_libraries(
+  ${PROJECT_NAME} INTERFACE matt-daemon::rpc
+                          matt-daemon::options)
 target_include_directories(
   ${PROJECT_NAME}
   INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

@@ -12,7 +12,15 @@ target_sources(${PROJECT_NAME}
     FILE_SET HEADERS
     BASE_DIRS include
     FILES
-      include/matt-daemon-rpc/foo.hpp
+      include/matt-daemon-rpc/annotations.hpp
+      include/matt-daemon-rpc/client-port.hpp
+      include/matt-daemon-rpc/concepts.hpp
+      include/matt-daemon-rpc/error.hpp
+      include/matt-daemon-rpc/result.hpp
+      include/matt-daemon-rpc/strong-type.hpp
+      
+      include/matt-daemon-rpc/detail/client-port-impl.hpp
+      include/matt-daemon-rpc/detail/concepts.hpp
 )
 # cmake-format: on
 
@@ -31,11 +39,12 @@ target_include_directories(
   INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
             $<INSTALL_INTERFACE:include>)
 
+include(GNUInstallDirs)
+
 if(MATT_DAEMON_BUILD_TESTS)
   add_subdirectory(test)
 endif()
 
-include(GNUInstallDirs)
 install(
   TARGETS ${PROJECT_NAME}
   EXPORT ${PROJECT_NAME}-targets
