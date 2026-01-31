@@ -1,7 +1,7 @@
 // This could be replaced with
 // https://www.boost.org/doc/libs/1_35_0/doc/html/boost/interprocess/file_lock.html
 
-#include "FileLock.hpp"
+#include "file-lock.hpp"
 
 #include <fcntl.h>
 #include <sys/file.h>

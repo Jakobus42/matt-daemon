@@ -8,12 +8,12 @@ add_library(${PROJECT_NAME}-lib OBJECT)
 # cmake-format: off
 target_sources(${PROJECT_NAME}-lib
   PRIVATE
-    src/FileLock.cpp
+    src/file-lock.cpp
   PUBLIC
     FILE_SET HEADERS
     BASE_DIRS src
     FILES
-      src/FileLock.hpp
+      src/file-lock.hpp
 )
 # cmake-format: on
 
