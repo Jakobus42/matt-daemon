@@ -5,109 +5,88 @@
 #include <matt-daemon-rpc/concepts.hpp>
 #include <matt-daemon-rpc/result.hpp>
 
-namespace test::concepts {
+namespace {
 
-enum[[= ::matt_daemon_rpc::service]] ServiceAnnotationEnum {};
+using ::matt_daemon_rpc::Callable;
+using ::matt_daemon_rpc::method;
+using ::matt_daemon_rpc::Method;
+using ::matt_daemon_rpc::Result;
+using ::matt_daemon_rpc::service;
+using ::matt_daemon_rpc::Service;
 
-class[[= ::matt_daemon_rpc::service]] ServiceAnnotationClass {};
-
+enum[[= service]] ServiceAnnotationEnum {};
+class[[= service]] ServiceAnnotationClass {};
 class NoAnnotationClass {};
-
 struct NoAnnotationStruct {};
 
-struct[[= ::matt_daemon_rpc::service]] ServiceAnnotationStruct {
+struct[[= service]] ServiceAnnotationStruct {
   enum class Foo : std::uint8_t { kBar };
 
-  auto [[= ::matt_daemon_rpc::method]] MethodAnnotationOneArg(Foo)
-      -> ::matt_daemon_rpc::Result<void>;
-  auto [[= ::matt_daemon_rpc::method]] MethodAnnotationNoArg()
-      -> ::matt_daemon_rpc::Result<void>;
-  auto [[= ::matt_daemon_rpc::method]]
-      [[= ::matt_daemon_rpc::method]] MethodMultiAnnotationNoArg()
-          -> ::matt_daemon_rpc::Result<void>;
+  auto [[= method]] MethodAnnotationOneArg(Foo) -> Result<void>;
+  auto [[= method]] MethodAnnotationNoArg() -> Result<void>;
+  auto [[= method]][[= method]] MethodMultiAnnotationNoArg() -> Result<void>;
 
-  auto NoAnnotationNoArg() -> ::matt_daemon_rpc::Result<void>;
+  auto NoAnnotationNoArg() -> Result<void>;
 };
 
-}  // namespace test::concepts
-
-enum class Foo : std::uint8_t { kBar };
-
-[[= matt_daemon_rpc::method]] auto MethodOneArg(Foo)
-    -> ::matt_daemon_rpc::Result<void>;
-;
-
-using matt_daemon_rpc::Callable;
-using matt_daemon_rpc::Method;
-using matt_daemon_rpc::Service;
+}  // namespace
 
 TEST(ConceptsTest, CallableOnlyAllowsFunctionsInNamespace) {
-  static_assert(
-      Callable<
-          ^^test::concepts::ServiceAnnotationStruct,
-          ^^test::concepts::ServiceAnnotationStruct::MethodAnnotationOneArg,
-          test::concepts::ServiceAnnotationStruct::Foo>);
+  static_assert(Callable<^^ServiceAnnotationStruct,
+                         ^^ServiceAnnotationStruct::MethodAnnotationOneArg,
+                         ServiceAnnotationStruct::Foo>);
 }
 
 TEST(ConceptsTest, CallableDoesNotAllowGlobalNamespace) {
-  static_assert(
-      !Callable<
-          ^^::,
-          ^^test::concepts::ServiceAnnotationStruct::MethodAnnotationOneArg,
-          test::concepts::ServiceAnnotationStruct::Foo>);
+  static_assert(!Callable<^^::,
+                          ^^ServiceAnnotationStruct::MethodAnnotationOneArg,
+                          ServiceAnnotationStruct::Foo>);
 }
 
 TEST(ConceptsTest, CallableAllowsCorrectParameterTypes) {
-  static_assert(
-      Callable<
-          ^^test::concepts::ServiceAnnotationStruct,
-          ^^test::concepts::ServiceAnnotationStruct::MethodAnnotationOneArg,
-          test::concepts::ServiceAnnotationStruct::Foo>);
+  static_assert(Callable<^^ServiceAnnotationStruct,
+                         ^^ServiceAnnotationStruct::MethodAnnotationOneArg,
+                         ServiceAnnotationStruct::Foo>);
 }
 
 TEST(ConceptsTest, CallableDoesNotAllowWrongParameterTypes) {
-  static_assert(
-      !Callable<
-          ^^test::concepts::ServiceAnnotationStruct,
-          ^^test::concepts::ServiceAnnotationStruct::MethodAnnotationOneArg,
-          std::uint8_t>);
+  static_assert(!Callable<^^ServiceAnnotationStruct,
+                          ^^ServiceAnnotationStruct::MethodAnnotationOneArg,
+                          std::uint8_t>);
 }
 
 TEST(ConceptsTest, MethodDoesNotAllowFunctionsWithNoAnnotation) {
-  static_assert(
-      !Method<^^test::concepts::ServiceAnnotationStruct,
-              ^^test::concepts::ServiceAnnotationStruct::NoAnnotationNoArg,
-              void>);
+  static_assert(!Method<^^ServiceAnnotationStruct,
+                        ^^ServiceAnnotationStruct::NoAnnotationNoArg,
+                        void>);
 }
 
 TEST(ConceptsTest, MethodDoesAllowFunctionsWithAnnotation) {
-  static_assert(
-      Method<^^test::concepts::ServiceAnnotationStruct,
-             ^^test::concepts::ServiceAnnotationStruct::MethodAnnotationNoArg>);
+  static_assert(Method<^^ServiceAnnotationStruct,
+                       ^^ServiceAnnotationStruct::MethodAnnotationNoArg>);
 }
 
 TEST(ConceptsTest, MethodDoesAllowFunctionsWithMultipleAnnotations) {
-  static_assert(!Method<^^test::concepts::ServiceAnnotationStruct,
-                        ^^test::concepts::ServiceAnnotationStruct::
-                             MethodMultiAnnotationNoArg>);
+  static_assert(!Method<^^ServiceAnnotationStruct,
+                        ^^ServiceAnnotationStruct::MethodMultiAnnotationNoArg>);
 }
 
 TEST(ConceptsTest, ServiceDoesAllowStructsWithAnnotation) {
-  static_assert(Service<^^test::concepts::ServiceAnnotationStruct>);
+  static_assert(Service<^^ServiceAnnotationStruct>);
 }
 
 TEST(ConceptsTest, ServiceDoesNotAllowStructsWithNoAnnotation) {
-  static_assert(!Service<^^test::concepts::NoAnnotationStruct>);
+  static_assert(!Service<^^NoAnnotationStruct>);
 }
 
 TEST(ConceptsTest, ServiceDoesAllowClassesWithAnnotation) {
-  static_assert(Service<^^test::concepts::ServiceAnnotationClass>);
+  static_assert(Service<^^ServiceAnnotationClass>);
 }
 
 TEST(ConceptsTest, ServiceDoesNotAllowClassesWithNoAnnotation) {
-  static_assert(!Service<^^test::concepts::NoAnnotationClass>);
+  static_assert(!Service<^^NoAnnotationClass>);
 }
 
 TEST(ConceptsTest, ServiceDoesNotAllowEnumsWithAnnotation) {
-  static_assert(!Service<^^test::concepts::ServiceAnnotationEnum>);
+  static_assert(!Service<^^ServiceAnnotationEnum>);
 }

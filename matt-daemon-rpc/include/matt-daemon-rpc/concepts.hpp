@@ -13,9 +13,8 @@
 namespace matt_daemon_rpc {
 
 template <std::meta::info Class>
-concept Service =
-    detail::HasAnnotation<Class, decltype(::matt_daemon_rpc::service)>() &&
-    std::meta::is_class_type(Class);
+concept Service = detail::HasAnnotation<Class, decltype(service)>() &&
+                  std::meta::is_class_type(Class);
 
 template <std::meta::info IService, std::meta::info Func, typename... Args>
 concept Callable = Service<IService> && detail::IsChildOf<IService, Func>() &&
