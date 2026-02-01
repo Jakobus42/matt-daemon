@@ -19,10 +19,6 @@ using matt_daemon_rpc::Method;
 using matt_daemon_rpc::service;
 using matt_daemon_rpc::Service;
 
-// TODO(jsadjina):
-// maybe there is a better way to test if a concept is composed
-// from a other
-
 TEST(ConceptsTest, ServiceDoesAllowAnnotatedStructs) {
   struct[[= service]] AnnotatedStruct {};
 

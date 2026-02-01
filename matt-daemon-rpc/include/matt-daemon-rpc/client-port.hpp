@@ -6,6 +6,9 @@
 #include "matt-daemon-rpc/concepts.hpp"
 #include "matt-daemon-rpc/detail/client-port-impl.hpp"
 
+// TODO(jsadjina): consider not including impl here so only mock impl is
+// included in tests (or smth like that)
+
 namespace matt_daemon_rpc {
 
 template <std::meta::info IService,

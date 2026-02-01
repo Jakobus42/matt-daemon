@@ -1,8 +1,7 @@
 #ifndef MATT_DAEMON_RPC_STRONG_TYPE
 #define MATT_DAEMON_RPC_STRONG_TYPE
 
-// TODO(jsadjina): finish this
-// think about if this should be part of the api
+// TODO(jsadjina): think about if this should be part of the api
 
 #include <meta>
 
