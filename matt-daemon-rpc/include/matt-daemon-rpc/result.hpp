@@ -1,7 +1,7 @@
 #ifndef MATT_DAEMON_RPC_RESULT
 #define MATT_DAEMON_RPC_RESULT
 
-#include <matt-daemon-rpc/error.hpp>
+#include "matt-daemon-rpc/error.hpp"
 
 // TODO(jsadjina) write this
 

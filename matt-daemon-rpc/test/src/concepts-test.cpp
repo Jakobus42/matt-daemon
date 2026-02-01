@@ -3,33 +3,39 @@
 #include <cstdint>
 #include <matt-daemon-rpc/annotations.hpp>
 #include <matt-daemon-rpc/concepts.hpp>
+#include <matt-daemon-rpc/result.hpp>
 
 namespace test::concepts {
 
-enum[[= matt_daemon_rpc::service]] ServiceAnnotationEnum {};
+enum[[= ::matt_daemon_rpc::service]] ServiceAnnotationEnum {};
 
-class[[= matt_daemon_rpc::service]] ServiceAnnotationClass {};
+class[[= ::matt_daemon_rpc::service]] ServiceAnnotationClass {};
 
 class NoAnnotationClass {};
 
 struct NoAnnotationStruct {};
 
-struct[[= matt_daemon_rpc::service]] ServiceAnnotationStruct {
+struct[[= ::matt_daemon_rpc::service]] ServiceAnnotationStruct {
   enum class Foo : std::uint8_t { kBar };
 
-  auto [[= matt_daemon_rpc::method]] MethodAnnotationOneArg(Foo) -> void;
-  auto [[= matt_daemon_rpc::method]] MethodAnnotationNoArg() -> void;
-  auto [[= matt_daemon_rpc::method]]
-      [[= matt_daemon_rpc::method]] MethodMultiAnnotationNoArg() -> void;
+  auto [[= ::matt_daemon_rpc::method]] MethodAnnotationOneArg(Foo)
+      -> ::matt_daemon_rpc::Result<void>;
+  auto [[= ::matt_daemon_rpc::method]] MethodAnnotationNoArg()
+      -> ::matt_daemon_rpc::Result<void>;
+  auto [[= ::matt_daemon_rpc::method]]
+      [[= ::matt_daemon_rpc::method]] MethodMultiAnnotationNoArg()
+          -> ::matt_daemon_rpc::Result<void>;
 
-  auto NoAnnotationNoArg() -> void;
+  auto NoAnnotationNoArg() -> ::matt_daemon_rpc::Result<void>;
 };
 
 }  // namespace test::concepts
 
 enum class Foo : std::uint8_t { kBar };
 
-[[= matt_daemon_rpc::method]] auto MethodOneArg(Foo) -> void;
+[[= matt_daemon_rpc::method]] auto MethodOneArg(Foo)
+    -> ::matt_daemon_rpc::Result<void>;
+;
 
 using matt_daemon_rpc::Callable;
 using matt_daemon_rpc::Method;

@@ -1,9 +1,11 @@
 #ifndef MATT_DAEMON_RPC_ANNOTATIONS
 #define MATT_DAEMON_RPC_ANNOTATIONS
 
-// TODO(jsadjina): check what else is possible with annotations
-
 namespace matt_daemon_rpc {
+
+// annotations definetly have more potential xd
+// ideas to add would be version, deprecated,
+// description (maybe interesting for cli)
 
 inline constexpr struct {
 } service{};

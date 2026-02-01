@@ -2,8 +2,9 @@
 #define MATT_DAEMON_RPC_DETAIL_CLIENT_PORT_IMPL
 
 #include <cassert>
-#include <matt-daemon-rpc/concepts.hpp>
 #include <meta>
+
+#include "matt-daemon-rpc/concepts.hpp"
 
 namespace matt_daemon_rpc::detail {
 
@@ -20,7 +21,6 @@ class ClientPortImpl {
     requires Method<IService, Func, Args...>
   [[nodiscard]] auto Call([[maybe_unused]] Args&&... args) noexcept ->
       typename[:std::meta::return_type_of(Func):] {
-    assert(false && "Not implemented");
     return {};
   }
 

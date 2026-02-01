@@ -1,13 +1,14 @@
 #ifndef MATT_DAEMON_RPC_CONCEPTS
 #define MATT_DAEMON_RPC_CONCEPTS
 
-#include <matt-daemon-rpc/annotations.hpp>
-#include <matt-daemon-rpc/detail/concepts.hpp>
 #include <meta>
+
+#include "matt-daemon-rpc/annotations.hpp"
+#include "matt-daemon-rpc/detail/concepts.hpp"
+#include "matt-daemon-rpc/result.hpp"
 
 // TODO(jsadjina): get name of the service for error reporting
 // write more tests for those
-// check if callable return matt_daemon_rpc::Result
 
 namespace matt_daemon_rpc {
 
@@ -18,12 +19,12 @@ concept Service =
 
 template <std::meta::info IService, std::meta::info Func, typename... Args>
 concept Callable = Service<IService> && detail::IsChildOf<IService, Func>() &&
-                   detail::DoParameterTypesMatch<Func, Args...>();
+                   detail::DoParameterTypesMatch<Func, Args...>() &&
+                   detail::ReturnsTemplate<Func, ^^Result>();
 
 template <std::meta::info IService, std::meta::info Func, typename... Args>
-concept Method =
-    Callable<IService, Func, Args...> &&
-    detail::HasAnnotation<Func, decltype(::matt_daemon_rpc::method)>();
+concept Method = Callable<IService, Func, Args...> &&
+                 detail::HasAnnotation<Func, decltype(method)>();
 
 }  // namespace matt_daemon_rpc
 

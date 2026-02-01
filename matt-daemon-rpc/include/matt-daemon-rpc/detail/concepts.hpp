@@ -4,11 +4,11 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
-#include <matt-daemon-rpc/annotations.hpp>
-#include <matt-daemon-rpc/strong-type.hpp>
 #include <meta>
 #include <ranges>
 #include <vector>
+
+#include "matt-daemon-rpc/strong-type.hpp"
 
 namespace matt_daemon_rpc::detail {
 
@@ -49,6 +49,11 @@ template <std::meta::info T, typename AnnotationType>
         1}) noexcept -> bool {
   return std::meta::annotations_of(T, ^^AnnotationType).size() ==
          allowed_ammount.get();
+}
+
+template <std::meta::info Func, std::meta::info Template>
+[[nodiscard]] consteval auto ReturnsTemplate() noexcept -> bool {
+  return std::meta::template_of(std::meta::return_type_of(Func)) == Template;
 }
 
 }  // namespace matt_daemon_rpc::detail
