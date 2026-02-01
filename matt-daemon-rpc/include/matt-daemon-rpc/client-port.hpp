@@ -11,6 +11,12 @@
 
 namespace matt_daemon_rpc {
 
+/**
+ * @brief TBD
+ *
+ * @tparam IService
+ * @tparam Impl
+ */
 template <std::meta::info IService,
           typename Impl = detail::ClientPortImpl<IService>>
   requires Service<IService>

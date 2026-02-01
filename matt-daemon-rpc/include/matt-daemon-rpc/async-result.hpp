@@ -5,6 +5,12 @@
 
 namespace matt_daemon_rpc {
 
+/**
+ * @brief TBD
+ *
+ * @tparam T
+ * @tparam Err
+ */
 template <typename T, typename Err = std::monostate>
 struct AsyncResult final {
   using ErrorType = Error<Err>;

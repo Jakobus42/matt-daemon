@@ -7,6 +7,11 @@
 
 namespace matt_daemon_rpc {
 
+/**
+ * @brief TBD
+ *
+ * @tparam Err
+ */
 template <typename Err = std::monostate>
 struct Error final {};
 
