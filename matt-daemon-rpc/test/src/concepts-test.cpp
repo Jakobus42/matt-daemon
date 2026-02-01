@@ -1,92 +1,246 @@
+
+
+#include "matt-daemon-rpc/concepts.hpp"
+
 #include <gtest/gtest.h>
 
-#include <cstdint>
-#include <matt-daemon-rpc/annotations.hpp>
-#include <matt-daemon-rpc/concepts.hpp>
-#include <matt-daemon-rpc/result.hpp>
+#include <optional>
+#include <string>
+#include <vector>
 
-namespace {
+#include "matt-daemon-rpc/annotations.hpp"
+#include "matt-daemon-rpc/async-result.hpp"
+#include "matt-daemon-rpc/error.hpp"
 
-using ::matt_daemon_rpc::Callable;
-using ::matt_daemon_rpc::method;
-using ::matt_daemon_rpc::Method;
-using ::matt_daemon_rpc::Result;
-using ::matt_daemon_rpc::service;
-using ::matt_daemon_rpc::Service;
+using matt_daemon_rpc::AsyncResult;
+using matt_daemon_rpc::Callable;
+using matt_daemon_rpc::method;
+using matt_daemon_rpc::Method;
+using matt_daemon_rpc::service;
+using matt_daemon_rpc::Service;
 
-enum[[= service]] ServiceAnnotationEnum {};
-class[[= service]] ServiceAnnotationClass {};
-class NoAnnotationClass {};
-struct NoAnnotationStruct {};
+// TODO(jsadjina):
+// maybe there is a better way to test if a concept is composed
+// from a other
 
-struct[[= service]] ServiceAnnotationStruct {
-  enum class Foo : std::uint8_t { kBar };
+TEST(ConceptsTest, ServiceDoesAllowAnnotatedStructs) {
+  struct[[= service]] AnnotatedStruct {};
 
-  auto [[= method]] MethodAnnotationOneArg(Foo) -> Result<void>;
-  auto [[= method]] MethodAnnotationNoArg() -> Result<void>;
-  auto [[= method]][[= method]] MethodMultiAnnotationNoArg() -> Result<void>;
-
-  auto NoAnnotationNoArg() -> Result<void>;
-};
-
-}  // namespace
-
-TEST(ConceptsTest, CallableOnlyAllowsFunctionsInNamespace) {
-  static_assert(Callable<^^ServiceAnnotationStruct,
-                         ^^ServiceAnnotationStruct::MethodAnnotationOneArg,
-                         ServiceAnnotationStruct::Foo>);
+  static_assert(Service<^^AnnotatedStruct>);
 }
 
-TEST(ConceptsTest, CallableDoesNotAllowGlobalNamespace) {
-  static_assert(!Callable<^^::,
-                          ^^ServiceAnnotationStruct::MethodAnnotationOneArg,
-                          ServiceAnnotationStruct::Foo>);
+TEST(ConceptsTest, ServiceDoesNotAllowUnannotatedStructs) {
+  struct UnannotatedStruct {};
+
+  static_assert(!Service<^^UnannotatedStruct>);
 }
 
-TEST(ConceptsTest, CallableAllowsCorrectParameterTypes) {
-  static_assert(Callable<^^ServiceAnnotationStruct,
-                         ^^ServiceAnnotationStruct::MethodAnnotationOneArg,
-                         ServiceAnnotationStruct::Foo>);
+TEST(ConceptsTest, ServiceDoesAllowAnnotatedClasses) {
+  class[[= service]] AnnotatedClass {};
+
+  static_assert(Service<^^AnnotatedClass>);
+}
+
+TEST(ConceptsTest, ServiceDoesNotAllowUnannotatedClasses) {
+  class UnannotatedClass {};
+
+  static_assert(!Service<^^UnannotatedClass>);
+}
+
+TEST(ConceptsTest, ServiceDoesNotAllowAnnotatedEnums) {
+  enum class[[= service]] AnnotatedEnum {};
+
+  static_assert(!Service<^^AnnotatedEnum>);
+}
+
+TEST(ConceptsTest, CallableDoesNotAllowUnannotatedService) {
+  struct UnannotatedServiceStruct {
+    auto UnannotatedNoParameterValidResult() -> AsyncResult<void>;
+  };
+
+  static_assert(!Service<^^UnannotatedServiceStruct>);
+  static_assert(
+      !Callable<^^UnannotatedServiceStruct,
+                ^^UnannotatedServiceStruct::UnannotatedNoParameterValidResult>);
+}
+
+TEST(ConceptsTest, CallableAllowsFunctionsInService) {
+  struct[[= service]] AnnotatedServiceStruct {
+    auto UnannotatedNoParameterValidResult() -> AsyncResult<void>;
+  };
+
+  static_assert(Service<^^AnnotatedServiceStruct>);
+  static_assert(
+      Callable<^^AnnotatedServiceStruct,
+               ^^AnnotatedServiceStruct::UnannotatedNoParameterValidResult>);
+}
+
+TEST(ConceptsTest, CallableDoesNotAllowFunctionsOutsideService) {
+  struct[[= service]] AnnotatedServiceStruct {};
+  auto UnannotatedNoParameterValidResult() -> AsyncResult<void>;
+
+  static_assert(
+      !Callable<^^AnnotatedServiceStruct, ^^UnannotatedNoParameterValidResult>);
+}
+
+TEST(ConceptsTest, CallableDoesAllowCorrectParameterTypes) {
+  struct[[= service]] AnnotatedServiceStruct {
+    auto UnannotatedOneParameterValidResult(int) -> AsyncResult<void>;
+  };
+
+  static_assert(
+      Callable<^^AnnotatedServiceStruct,
+               ^^AnnotatedServiceStruct::UnannotatedOneParameterValidResult,
+               int>);
 }
 
 TEST(ConceptsTest, CallableDoesNotAllowWrongParameterTypes) {
-  static_assert(!Callable<^^ServiceAnnotationStruct,
-                          ^^ServiceAnnotationStruct::MethodAnnotationOneArg,
-                          std::uint8_t>);
+  struct[[= service]] AnnotatedServiceStruct {
+    auto UnannotatedOneParameterValidResult(int) -> AsyncResult<void>;
+  };
+
+  static_assert(
+      !Callable<^^AnnotatedServiceStruct,
+                ^^AnnotatedServiceStruct::UnannotatedOneParameterValidResult,
+                char>);
 }
 
-TEST(ConceptsTest, MethodDoesNotAllowFunctionsWithNoAnnotation) {
-  static_assert(!Method<^^ServiceAnnotationStruct,
-                        ^^ServiceAnnotationStruct::NoAnnotationNoArg,
-                        void>);
+TEST(ConceptsTest, CallableDoesAllowComplexParameterTypes) {
+  struct[[= service]] AnnotatedServiceStruct {
+    // NOLINTNEXTLINE(altera-struct-pack-align)
+    struct ComplexStruct {
+      std::vector<std::string> foo;
+      std::array<std::string, 1> bar;
+    };
+
+    auto UnannotatedOneComplexParameterValidResult(ComplexStruct)
+        -> AsyncResult<void>;
+  };
+
+  static_assert(
+      Callable<
+          ^^AnnotatedServiceStruct,
+          ^^AnnotatedServiceStruct::UnannotatedOneComplexParameterValidResult,
+          AnnotatedServiceStruct::ComplexStruct>);
 }
 
-TEST(ConceptsTest, MethodDoesAllowFunctionsWithAnnotation) {
-  static_assert(Method<^^ServiceAnnotationStruct,
-                       ^^ServiceAnnotationStruct::MethodAnnotationNoArg>);
+TEST(ConceptsTest, CallableDoesNotAllowSimilarComplexParameterTypes) {
+  struct[[= service]] AnnotatedServiceStruct {
+    // NOLINTNEXTLINE(altera-struct-pack-align)
+    struct ComplexStruct {
+      std::vector<std::string> foo;
+      std::array<std::string, 1> bar;
+    };
+
+    // NOLINTNEXTLINE(altera-struct-pack-align)
+    struct ComplexSimilarStruct {
+      std::vector<std::string> foo;
+      std::array<std::string, 1> bar;
+    };
+
+    auto UnannotatedOneComplexParameterValidResult(ComplexStruct)
+        -> AsyncResult<void>;
+  };
+
+  static_assert(
+      !Callable<
+          ^^AnnotatedServiceStruct,
+          ^^AnnotatedServiceStruct::UnannotatedOneComplexParameterValidResult,
+          AnnotatedServiceStruct::ComplexSimilarStruct>);
 }
 
-TEST(ConceptsTest, MethodDoesAllowFunctionsWithMultipleAnnotations) {
-  static_assert(!Method<^^ServiceAnnotationStruct,
-                        ^^ServiceAnnotationStruct::MethodMultiAnnotationNoArg>);
+TEST(ConceptsTest, CallableDoesAllowCorrectReturnType) {
+  struct[[= service]] AnnotatedServiceStruct {
+    auto UnannotatedNoParameterValidResult() -> AsyncResult<void>;
+  };
+
+  static_assert(
+      Callable<^^AnnotatedServiceStruct,
+               ^^AnnotatedServiceStruct::UnannotatedNoParameterValidResult>);
 }
 
-TEST(ConceptsTest, ServiceDoesAllowStructsWithAnnotation) {
-  static_assert(Service<^^ServiceAnnotationStruct>);
+TEST(ConceptsTest, CallableDoesNotAllowWrongReturnType) {
+  struct[[= service]] AnnotatedServiceStruct {
+    auto UnannotatedNoParameterInvalidResult() -> bool;
+  };
+
+  static_assert(
+      !Callable<^^AnnotatedServiceStruct,
+                ^^AnnotatedServiceStruct::UnannotatedNoParameterInvalidResult>);
 }
 
-TEST(ConceptsTest, ServiceDoesNotAllowStructsWithNoAnnotation) {
-  static_assert(!Service<^^NoAnnotationStruct>);
+TEST(ConceptsTest, CallableDoesNotAllowWrongTemplatedReturnType) {
+  struct[[= service]] AnnotatedServiceStruct {
+    auto UnannotatedNoParameterInvalidResult() -> std::optional<bool>;
+  };
+
+  static_assert(
+      !Callable<^^AnnotatedServiceStruct,
+                ^^AnnotatedServiceStruct::UnannotatedNoParameterInvalidResult>);
 }
 
-TEST(ConceptsTest, ServiceDoesAllowClassesWithAnnotation) {
-  static_assert(Service<^^ServiceAnnotationClass>);
+TEST(ConceptsTest, CallableDoesAllowCustomError) {
+  struct[[= service]] AnnotatedServiceStruct {
+    struct Error {};
+    auto UnannotatedNoParameterValidResultWithCustomError()
+        -> AsyncResult<int, ::matt_daemon_rpc::Error<Error>>;
+  };
+
+  static_assert(
+      Callable<^^AnnotatedServiceStruct,
+               ^^AnnotatedServiceStruct::
+                    UnannotatedNoParameterValidResultWithCustomError>);
 }
 
-TEST(ConceptsTest, ServiceDoesNotAllowClassesWithNoAnnotation) {
-  static_assert(!Service<^^NoAnnotationClass>);
+TEST(ConceptsTest, MethodDoesNotAllowNonCallableFunctions) {
+  struct[[= service]] AnnotatedServiceStruct {
+    auto [[= method]] AnnotatedMethodOneParameterValidResult(int)
+        -> AsyncResult<void>;
+  };
+
+  static_assert(
+      !Callable<
+          ^^AnnotatedServiceStruct,
+          ^^AnnotatedServiceStruct::AnnotatedMethodOneParameterValidResult>);
+  static_assert(
+      !Method<
+          ^^AnnotatedServiceStruct,
+          ^^AnnotatedServiceStruct::AnnotatedMethodOneParameterValidResult>);
 }
 
-TEST(ConceptsTest, ServiceDoesNotAllowEnumsWithAnnotation) {
-  static_assert(!Service<^^ServiceAnnotationEnum>);
+TEST(ConceptsTest, MethodAllowsCallableFunctions) {
+  struct[[= service]] AnnotatedServiceStruct {
+    auto [[= method]] AnnotatedMethodOneParameterValidResult(int)
+        -> AsyncResult<void>;
+  };
+
+  static_assert(
+      Callable<^^AnnotatedServiceStruct,
+               ^^AnnotatedServiceStruct::AnnotatedMethodOneParameterValidResult,
+               int>);
+  static_assert(
+      Method<^^AnnotatedServiceStruct,
+             ^^AnnotatedServiceStruct::AnnotatedMethodOneParameterValidResult,
+             int>);
+}
+
+TEST(ConceptsTest, MethodDoesAllowAnnotatedFunctions) {
+  struct[[= service]] AnnotatedServiceStruct {
+    auto [[= method]] AnnotatedMethodNoParameterValidResult()
+        -> AsyncResult<void>;
+  };
+
+  static_assert(
+      Method<^^AnnotatedServiceStruct,
+             ^^AnnotatedServiceStruct::AnnotatedMethodNoParameterValidResult>);
+}
+
+TEST(ConceptsTest, MethodDoesNotAllowUnannotatedFunction) {
+  struct[[= service]] AnnotatedServiceStruct {
+    auto UnannotatedNoParameterValidResult() -> AsyncResult<void>;
+  };
+
+  static_assert(
+      !Method<^^AnnotatedServiceStruct,
+              ^^AnnotatedServiceStruct::UnannotatedNoParameterValidResult>);
 }

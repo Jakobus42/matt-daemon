@@ -4,7 +4,7 @@
 // TODO(jsadjina): make this better
 
 #include <matt-daemon-rpc/annotations.hpp>
-#include <matt-daemon-rpc/result.hpp>
+#include <matt-daemon-rpc/async-result.hpp>
 #include <matt-daemon-rpc/strong-type.hpp>
 
 namespace matt_daemon_interface::example {
@@ -13,7 +13,7 @@ struct[[= matt_daemon_rpc::service]] PizzaService final {
   using IsOpen = matt_daemon_rpc::StrongType<bool, struct IsOpenTag>;
 
   [[= matt_daemon_rpc::method]] auto IsStoreOpen()
-      -> matt_daemon_rpc::Result<IsOpen>;
+      -> matt_daemon_rpc::AsyncResult<IsOpen>;
 };
 
 }  // namespace matt_daemon_interface::example

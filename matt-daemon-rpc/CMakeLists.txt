@@ -16,7 +16,7 @@ target_sources(${PROJECT_NAME}
       include/matt-daemon-rpc/client-port.hpp
       include/matt-daemon-rpc/concepts.hpp
       include/matt-daemon-rpc/error.hpp
-      include/matt-daemon-rpc/result.hpp
+      include/matt-daemon-rpc/async-result.hpp
       include/matt-daemon-rpc/strong-type.hpp
       
       include/matt-daemon-rpc/detail/client-port-impl.hpp

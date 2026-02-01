@@ -3,12 +3,13 @@
 
 #include "matt-daemon-rpc/error.hpp"
 
-// TODO(jsadjina) write this
-
 namespace matt_daemon_rpc {
 
-template <typename T, typename Err = Error<>>
-struct Result final {};
+template <typename T, typename Err = std::monostate>
+struct AsyncResult final {
+  using ErrorType = Error<Err>;
+  using ValueType = T;
+};
 
 }  // namespace matt_daemon_rpc
 

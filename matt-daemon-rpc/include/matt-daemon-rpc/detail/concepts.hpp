@@ -53,7 +53,11 @@ template <std::meta::info T, typename AnnotationType>
 
 template <std::meta::info Func, std::meta::info Template>
 [[nodiscard]] consteval auto ReturnsTemplate() noexcept -> bool {
-  return std::meta::template_of(std::meta::return_type_of(Func)) == Template;
+  auto const ret_type = std::meta::return_type_of(Func);
+  if (!std::meta::has_template_arguments(ret_type)) {
+    return false;
+  }
+  return std::meta::template_of(ret_type) == Template;
 }
 
 }  // namespace matt_daemon_rpc::detail
