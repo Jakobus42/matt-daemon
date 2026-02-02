@@ -3,12 +3,9 @@
 
 #include <algorithm>
 #include <array>
-#include <cstdint>
 #include <meta>
 #include <ranges>
 #include <vector>
-
-#include "matt-daemon-rpc/strong-type.hpp"
 
 namespace matt_daemon_rpc::detail {
 
@@ -40,15 +37,10 @@ template <std::meta::info Parent, std::meta::info T>
   }
   return false;
 }
-using RequiredAnnotationAmmount =
-    StrongType<std::uint8_t, struct RequiredAnnotationAmmountTag>;
 
 template <std::meta::info T, typename AnnotationType>
-[[nodiscard]] consteval auto HasAnnotation(
-    RequiredAnnotationAmmount allowed_ammount = RequiredAnnotationAmmount{
-        1}) noexcept -> bool {
-  return std::meta::annotations_of(T, ^^AnnotationType).size() ==
-         allowed_ammount.get();
+[[nodiscard]] consteval auto HasAnnotation() noexcept -> bool {
+  return !std::meta::annotations_of(T, ^^AnnotationType).empty();
 }
 
 template <std::meta::info Func, std::meta::info Template>

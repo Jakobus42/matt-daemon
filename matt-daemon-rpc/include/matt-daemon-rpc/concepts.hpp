@@ -4,7 +4,7 @@
 #include <meta>
 
 #include "matt-daemon-rpc/annotations.hpp"
-#include "matt-daemon-rpc/async-result.hpp"
+#include "matt-daemon-rpc/future-result.hpp"
 #include "matt-daemon-rpc/detail/concepts.hpp"
 
 // TODO(jsadjina): get name of the service for error reporting
@@ -27,8 +27,9 @@ concept Service = detail::HasAnnotation<Class, decltype(service)>() &&
  * @brief Validates that a function can be invoked as an RPC call.
  *
  * A callable must belong to a service which satisfies the @ref
- * matt_daemon_rpc::Service concept, have matching parameter types, and return
- * @ref matt_daemon_rpc::AsyncResult.
+ * matt_daemon_rpc::Service concept, have matching parameter types, and
+ * return
+ * @ref matt_daemon_rpc::FutureResult.
  *
  * @tparam IService The service containing the method
  * @tparam Func The method function
@@ -38,7 +39,7 @@ concept Service = detail::HasAnnotation<Class, decltype(service)>() &&
 template <std::meta::info IService, std::meta::info Func, typename... Args>
 concept Callable = Service<IService> && detail::IsChildOf<IService, Func>() &&
                    detail::DoParameterTypesMatch<Func, Args...>() &&
-                   detail::ReturnsTemplate<Func, ^^AsyncResult>();
+                   detail::ReturnsTemplate<Func, ^^FutureResult>();
 
 /**
  * @brief Validates that a function is a RPC method.

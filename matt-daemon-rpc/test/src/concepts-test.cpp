@@ -9,11 +9,11 @@
 #include <vector>
 
 #include "matt-daemon-rpc/annotations.hpp"
-#include "matt-daemon-rpc/async-result.hpp"
+#include "matt-daemon-rpc/future-result.hpp"
 #include "matt-daemon-rpc/error.hpp"
 
-using matt_daemon_rpc::AsyncResult;
 using matt_daemon_rpc::Callable;
+using matt_daemon_rpc::FutureResult;
 using matt_daemon_rpc::method;
 using matt_daemon_rpc::Method;
 using matt_daemon_rpc::service;
@@ -51,7 +51,7 @@ TEST(ConceptsTest, ServiceDoesNotAllowAnnotatedEnums) {
 
 TEST(ConceptsTest, CallableDoesNotAllowUnannotatedService) {
   struct UnannotatedServiceStruct {
-    auto UnannotatedNoParameterValidResult() -> AsyncResult<void>;
+    auto UnannotatedNoParameterValidResult() -> FutureResult<void>;
   };
 
   static_assert(!Service<^^UnannotatedServiceStruct>);
@@ -62,7 +62,7 @@ TEST(ConceptsTest, CallableDoesNotAllowUnannotatedService) {
 
 TEST(ConceptsTest, CallableAllowsFunctionsInService) {
   struct[[= service]] AnnotatedServiceStruct {
-    auto UnannotatedNoParameterValidResult() -> AsyncResult<void>;
+    auto UnannotatedNoParameterValidResult() -> FutureResult<void>;
   };
 
   static_assert(Service<^^AnnotatedServiceStruct>);
@@ -73,7 +73,7 @@ TEST(ConceptsTest, CallableAllowsFunctionsInService) {
 
 TEST(ConceptsTest, CallableDoesNotAllowFunctionsOutsideService) {
   struct[[= service]] AnnotatedServiceStruct {};
-  auto UnannotatedNoParameterValidResult() -> AsyncResult<void>;
+  auto UnannotatedNoParameterValidResult() -> FutureResult<void>;
 
   static_assert(
       !Callable<^^AnnotatedServiceStruct, ^^UnannotatedNoParameterValidResult>);
@@ -81,7 +81,7 @@ TEST(ConceptsTest, CallableDoesNotAllowFunctionsOutsideService) {
 
 TEST(ConceptsTest, CallableDoesAllowCorrectParameterTypes) {
   struct[[= service]] AnnotatedServiceStruct {
-    auto UnannotatedOneParameterValidResult(int) -> AsyncResult<void>;
+    auto UnannotatedOneParameterValidResult(int) -> FutureResult<void>;
   };
 
   static_assert(
@@ -92,7 +92,7 @@ TEST(ConceptsTest, CallableDoesAllowCorrectParameterTypes) {
 
 TEST(ConceptsTest, CallableDoesNotAllowWrongParameterTypes) {
   struct[[= service]] AnnotatedServiceStruct {
-    auto UnannotatedOneParameterValidResult(int) -> AsyncResult<void>;
+    auto UnannotatedOneParameterValidResult(int) -> FutureResult<void>;
   };
 
   static_assert(
@@ -110,7 +110,7 @@ TEST(ConceptsTest, CallableDoesAllowComplexParameterTypes) {
     };
 
     auto UnannotatedOneComplexParameterValidResult(ComplexStruct)
-        -> AsyncResult<void>;
+        -> FutureResult<void>;
   };
 
   static_assert(
@@ -135,7 +135,7 @@ TEST(ConceptsTest, CallableDoesNotAllowSimilarComplexParameterTypes) {
     };
 
     auto UnannotatedOneComplexParameterValidResult(ComplexStruct)
-        -> AsyncResult<void>;
+        -> FutureResult<void>;
   };
 
   static_assert(
@@ -147,7 +147,7 @@ TEST(ConceptsTest, CallableDoesNotAllowSimilarComplexParameterTypes) {
 
 TEST(ConceptsTest, CallableDoesAllowCorrectReturnType) {
   struct[[= service]] AnnotatedServiceStruct {
-    auto UnannotatedNoParameterValidResult() -> AsyncResult<void>;
+    auto UnannotatedNoParameterValidResult() -> FutureResult<void>;
   };
 
   static_assert(
@@ -179,7 +179,7 @@ TEST(ConceptsTest, CallableDoesAllowCustomError) {
   struct[[= service]] AnnotatedServiceStruct {
     struct Error {};
     auto UnannotatedNoParameterValidResultWithCustomError()
-        -> AsyncResult<int, ::matt_daemon_rpc::Error<Error>>;
+        -> FutureResult<int, ::matt_daemon_rpc::Error<Error>>;
   };
 
   static_assert(
@@ -191,7 +191,7 @@ TEST(ConceptsTest, CallableDoesAllowCustomError) {
 TEST(ConceptsTest, MethodDoesNotAllowNonCallableFunctions) {
   struct[[= service]] AnnotatedServiceStruct {
     auto [[= method]] AnnotatedMethodOneParameterValidResult(int)
-        -> AsyncResult<void>;
+        -> FutureResult<void>;
   };
 
   static_assert(
@@ -207,7 +207,7 @@ TEST(ConceptsTest, MethodDoesNotAllowNonCallableFunctions) {
 TEST(ConceptsTest, MethodAllowsCallableFunctions) {
   struct[[= service]] AnnotatedServiceStruct {
     auto [[= method]] AnnotatedMethodOneParameterValidResult(int)
-        -> AsyncResult<void>;
+        -> FutureResult<void>;
   };
 
   static_assert(
@@ -223,7 +223,7 @@ TEST(ConceptsTest, MethodAllowsCallableFunctions) {
 TEST(ConceptsTest, MethodDoesAllowAnnotatedFunctions) {
   struct[[= service]] AnnotatedServiceStruct {
     auto [[= method]] AnnotatedMethodNoParameterValidResult()
-        -> AsyncResult<void>;
+        -> FutureResult<void>;
   };
 
   static_assert(
@@ -233,7 +233,7 @@ TEST(ConceptsTest, MethodDoesAllowAnnotatedFunctions) {
 
 TEST(ConceptsTest, MethodDoesNotAllowUnannotatedFunction) {
   struct[[= service]] AnnotatedServiceStruct {
-    auto UnannotatedNoParameterValidResult() -> AsyncResult<void>;
+    auto UnannotatedNoParameterValidResult() -> FutureResult<void>;
   };
 
   static_assert(

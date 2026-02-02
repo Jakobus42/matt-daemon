@@ -34,10 +34,10 @@ class ClientPort final {
   }
 
  private:
-  explicit ClientPort(Impl impl) : impl_(std::move(impl)) {
+  explicit ClientPort(Impl impl) : impl_{std::move(impl)} {
   }
 
-  detail::ClientPortImpl<IService> impl_;
+  Impl impl_;
 };
 
 }  // namespace matt_daemon_rpc

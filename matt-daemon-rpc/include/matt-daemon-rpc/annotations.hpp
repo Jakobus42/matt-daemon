@@ -27,7 +27,7 @@ inline constexpr struct {
  *
  * Usage:
  * @code
- * [[= method]] auto MyMethod() -> AsyncResult<bool>;
+ * [[= method]] auto MyMethod() -> FutureResult<bool>;
  * @endcode
  */
 inline constexpr struct {
