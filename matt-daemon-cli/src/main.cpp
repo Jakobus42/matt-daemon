@@ -1,9 +1,12 @@
-#include <matt-daemon-interface/bar/bar.hpp>
-#include <matt-daemon-interface/foo/foo.hpp>
-#include <matt-daemon-rpc/foo.hpp>
+#include <matt-daemon-interface/example/example.hpp>
+#include <matt-daemon-rpc/client-port.hpp>
+#include <meta>
 
 auto main() -> int {
-  matt_daemon_rpc::foo();
-  matt_daemon_interface::bar::bar();
-  matt_daemon_interface::foo::foo();
+  using matt_daemon_rpc::ClientPort;
+  auto client_port =
+      ClientPort<^^matt_daemon_interface::example::PizzaService>::Make();
+
+  using matt_daemon_interface::example::PizzaService;
+  std::ignore = client_port.Call<^^PizzaService::IsStoreOpen>();
 }

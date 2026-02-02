@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <system_error>
 
-#include "FileLock.hpp"
+#include "file-lock.hpp"
 
 using matt_daemon::FileLock;
 
