@@ -1,6 +1,5 @@
 #include <matt-daemon-interface/example/example.hpp>
 #include <matt-daemon-rpc/client-port.hpp>
-#include <meta>
 
 auto main() -> int {
   using matt_daemon_rpc::ClientPort;

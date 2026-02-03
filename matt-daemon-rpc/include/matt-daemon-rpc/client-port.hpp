@@ -11,6 +11,12 @@
 
 namespace matt_daemon_rpc {
 
+/**
+ * @brief TBD
+ *
+ * @tparam IService
+ * @tparam Impl
+ */
 template <std::meta::info IService,
           typename Impl = detail::ClientPortImpl<IService>>
   requires Service<IService>
@@ -28,10 +34,10 @@ class ClientPort final {
   }
 
  private:
-  explicit ClientPort(Impl impl) : impl_(std::move(impl)) {
+  explicit ClientPort(Impl impl) : impl_{std::move(impl)} {
   }
 
-  detail::ClientPortImpl<IService> impl_;
+  Impl impl_;
 };
 
 }  // namespace matt_daemon_rpc

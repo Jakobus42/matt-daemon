@@ -7,6 +7,12 @@
 
 namespace matt_daemon_rpc {
 
+/**
+ * @brief TBD
+ *
+ * @tparam T
+ * @tparam Tag
+ */
 template <typename T, typename Tag>
 class StrongType {
  public:
