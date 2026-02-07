@@ -12,6 +12,7 @@ include(cmake/CompilerWarnings.cmake)
 include(cmake/StaticAnalyzers.cmake)
 include(cmake/Sanitizers.cmake)
 include(cmake/Doxygen.cmake)
+include(cmake/Config.cmake)
 
 option(MATT_DAEMON_BUILD_TESTS "Build matt-daemon tests" ${BUILD_TESTING})
 

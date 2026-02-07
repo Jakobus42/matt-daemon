@@ -1,0 +1,18 @@
+#ifndef @PROJECT_NAME_UPPER@_CONFIG_HPP
+#define @PROJECT_NAME_UPPER@_CONFIG_HPP
+
+#include <cstdint>
+#include <string_view>
+
+namespace @PROJECT_NAMESPACE@::cmake {
+
+inline constexpr std::string_view project_name = "@PROJECT_NAME@";
+inline constexpr std::string_view project_version = "@PROJECT_VERSION@";
+inline constexpr std::uint8_t project_version_major{@PROJECT_VERSION_MAJOR@};
+inline constexpr std::uint8_t project_version_minor{@PROJECT_VERSION_MINOR@};
+inline constexpr std::uint8_t project_version_patch{@PROJECT_VERSION_PATCH@};
+inline constexpr bool is_debug_build = $<IF:$<CONFIG:Debug>,true,false>;
+
+} // namespace @PROJECT_NAMESPACE@::cmake
+
+#endif

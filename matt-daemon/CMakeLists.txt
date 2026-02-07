@@ -8,21 +8,23 @@ add_library(${PROJECT_NAME}-lib OBJECT)
 # cmake-format: off
 target_sources(${PROJECT_NAME}-lib
   PRIVATE
-    src/file-lock.cpp
+  src/file-lock.cpp
   PUBLIC
-    FILE_SET HEADERS
-    BASE_DIRS src
-    FILES
-      src/file-lock.hpp
+  FILE_SET HEADERS
+  BASE_DIRS src
+  FILES
+  src/file-lock.hpp
 )
 # cmake-format: on
 
 set_target_properties(${PROJECT_NAME}-lib
-                      PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
+  PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
 
 target_link_libraries(
   ${PROJECT_NAME}-lib PUBLIC matt-daemon::rpc matt-daemon::interface
-                             matt-daemon::options)
+  matt-daemon::options)
+
+matt_daemon_setup_config(${PROJECT_NAME}-lib)
 
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE src/main.cpp)
@@ -35,4 +37,4 @@ endif()
 
 include(GNUInstallDirs)
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-                                        COMPONENT ${PROJECT_NAME})
+  COMPONENT ${PROJECT_NAME})

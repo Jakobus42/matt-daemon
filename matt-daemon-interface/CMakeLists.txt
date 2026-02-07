@@ -9,22 +9,24 @@ add_library(matt-daemon::interface ALIAS ${PROJECT_NAME})
 # cmake-format: off
 target_sources(${PROJECT_NAME}
   INTERFACE
-    FILE_SET HEADERS
-    BASE_DIRS include
-    FILES
-      include/matt-daemon-interface/example/example.hpp
+  FILE_SET HEADERS
+  BASE_DIRS include
+  FILES
+  include/matt-daemon-interface/example/example.hpp
 )
 # cmake-format: on
 
 set_target_properties(${PROJECT_NAME} PROPERTIES VERIFY_INTERFACE_HEADER_SETS
-                                                 ON)
+  ON)
 target_link_libraries(
   ${PROJECT_NAME} INTERFACE matt-daemon::rpc
-                          matt-daemon::options)
+  matt-daemon::options)
 target_include_directories(
   ${PROJECT_NAME}
   INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-            $<INSTALL_INTERFACE:include>)
+  $<INSTALL_INTERFACE:include>)
+
+matt_daemon_setup_config(${PROJECT_NAME})
 
 include(GNUInstallDirs)
 install(

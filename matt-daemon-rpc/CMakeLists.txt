@@ -9,35 +9,37 @@ add_library(matt-daemon::rpc ALIAS ${PROJECT_NAME})
 # cmake-format: off
 target_sources(${PROJECT_NAME}
   INTERFACE
-    FILE_SET HEADERS
-    BASE_DIRS include
-    FILES
-      include/matt-daemon-rpc/annotations.hpp
-      include/matt-daemon-rpc/client-port.hpp
-      include/matt-daemon-rpc/concepts.hpp
-      include/matt-daemon-rpc/error.hpp
-      include/matt-daemon-rpc/async-result.hpp
-      include/matt-daemon-rpc/strong-type.hpp
-      
-      include/matt-daemon-rpc/detail/client-port-impl.hpp
-      include/matt-daemon-rpc/detail/concepts.hpp
+  FILE_SET HEADERS
+  BASE_DIRS include
+  FILES
+  include/matt-daemon-rpc/annotations.hpp
+  include/matt-daemon-rpc/client-port.hpp
+  include/matt-daemon-rpc/concepts.hpp
+  include/matt-daemon-rpc/error.hpp
+  include/matt-daemon-rpc/async-result.hpp
+  include/matt-daemon-rpc/strong-type.hpp
+
+  include/matt-daemon-rpc/detail/client-port-impl.hpp
+  include/matt-daemon-rpc/detail/concepts.hpp
 )
 # cmake-format: on
 
 set_target_properties(${PROJECT_NAME} PROPERTIES VERIFY_INTERFACE_HEADER_SETS
-                                                 ON)
+  ON)
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_26)
 target_compile_options(
   ${PROJECT_NAME}
   INTERFACE
-    -freflection-latest # https://github.com/bloomberg/clang-p2996/blob/p2996/P2996.md
+  -freflection-latest # https://github.com/bloomberg/clang-p2996/blob/p2996/P2996.md
 )
 
 target_include_directories(
   ${PROJECT_NAME}
   INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-            $<INSTALL_INTERFACE:include>)
+  $<INSTALL_INTERFACE:include>)
+
+matt_daemon_setup_config(${PROJECT_NAME})
 
 include(GNUInstallDirs)
 
