@@ -1,0 +1,6 @@
+#ifndef MATT_DAEMON_INTERFACE_EXAMPLE_EXAMPLE
+#define MATT_DAEMON_INTERFACE_EXAMPLE_EXAMPLE
+
+namespace matt_daemon::interface::example {}
+
+#endif  // MATT_DAEMON_INTERFACE_EXAMPLE_EXAMPLE

@@ -1,5 +1,8 @@
-#ifndef @PROJECT_NAME_UPPER@_CONFIG_HPP
-#define @PROJECT_NAME_UPPER@_CONFIG_HPP
+
+// clang-format off
+
+#ifndef @PROJECT_NAME_UPPER@_CONFIG
+#define @PROJECT_NAME_UPPER@_CONFIG
 
 #include <cstdint>
 #include <string_view>
@@ -15,4 +18,5 @@ inline constexpr bool is_debug_build = $<IF:$<CONFIG:Debug>,true,false>;
 
 } // namespace @PROJECT_NAMESPACE@::cmake
 
-#endif
+#endif // @PROJECT_NAME_UPPER@_CONFIG
+

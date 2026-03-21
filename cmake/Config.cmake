@@ -1,21 +1,31 @@
-# yeah idk if this is too good but it works xd
+# yeah this is cursed 
 function(matt_daemon_setup_config TARGET)
-  string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
-  string(REPLACE "-" "_" PROJECT_NAME_UPPER "${PROJECT_NAME_UPPER}")
+  string(REPLACE "-" "_" ROOT_NAMESPACE "${CMAKE_PROJECT_NAME}")
+  if(PROJECT_NAME STREQUAL CMAKE_PROJECT_NAME)
+    set(PROJECT_NAMESPACE "${ROOT_NAMESPACE}")
+    set(INCLUDE_PREFIX "${CMAKE_PROJECT_NAME}")
+  else()
+    string(REPLACE "${CMAKE_PROJECT_NAME}-" "" SUBPROJECT_SUFFIX "${PROJECT_NAME}")
+    string(REPLACE "-" "_" SUBPROJECT_SUFFIX "${SUBPROJECT_SUFFIX}")
+    set(PROJECT_NAMESPACE "${ROOT_NAMESPACE}::${SUBPROJECT_SUFFIX}")
+    set(INCLUDE_PREFIX "${CMAKE_PROJECT_NAME}/${SUBPROJECT_SUFFIX}")
+  endif()
 
-  string(REPLACE "-" "_" PROJECT_NAMESPACE "${PROJECT_NAME}")
+  string(TOUPPER "${INCLUDE_PREFIX}" PROJECT_NAME_UPPER)
+  string(REPLACE "/" "_" PROJECT_NAME_UPPER "${PROJECT_NAME_UPPER}")
+  string(REPLACE "-" "_" PROJECT_NAME_UPPER "${PROJECT_NAME_UPPER}")
 
   configure_file(
     "${CMAKE_SOURCE_DIR}/cmake/templates/config.hpp.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/configured_files/${PROJECT_NAME}/config.hpp.intermediate"
+    "${CMAKE_CURRENT_BINARY_DIR}/configured_files/${INCLUDE_PREFIX}/config.hpp.intermediate"
     ESCAPE_QUOTES)
 
   file(
     GENERATE
     OUTPUT
-    "${CMAKE_CURRENT_BINARY_DIR}/configured_files/include/${PROJECT_NAME}/config.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/configured_files/include/${INCLUDE_PREFIX}/config.hpp"
     INPUT
-    "${CMAKE_CURRENT_BINARY_DIR}/configured_files/${PROJECT_NAME}/config.hpp.intermediate"
+    "${CMAKE_CURRENT_BINARY_DIR}/configured_files/${INCLUDE_PREFIX}/config.hpp.intermediate"
   )
 
   get_target_property(TARGET_TYPE ${TARGET} TYPE)

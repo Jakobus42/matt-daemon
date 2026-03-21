@@ -1,5 +1,3 @@
 # matt-daemon
 
-## Components
-
-[matt-daemon-rpc](matt-daemon-rpc/README.md)
+See the [documentation](doc/index.md)
