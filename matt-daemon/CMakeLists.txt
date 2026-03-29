@@ -7,13 +7,13 @@ add_library(${PROJECT_NAME}-lib OBJECT)
 #
 # cmake-format: off
 target_sources(${PROJECT_NAME}-lib
-  PRIVATE
-  src/file-lock.cpp
-  PUBLIC
+PUBLIC
   FILE_SET HEADERS
   BASE_DIRS src
   FILES
-  src/file-lock.hpp
+    src/file-lock.hpp
+PRIVATE
+  src/file-lock.cpp
 )
 # cmake-format: on
 
@@ -23,6 +23,8 @@ set_target_properties(${PROJECT_NAME}-lib
 target_link_libraries(
   ${PROJECT_NAME}-lib PUBLIC matt-daemon::rpc matt-daemon::interface
   matt-daemon::options)
+
+matt_daemon_apply_static_analyses(${PROJECT_NAME}-lib)
 
 matt_daemon_setup_config(${PROJECT_NAME}-lib)
 
@@ -35,6 +37,4 @@ if(MATT_DAEMON_BUILD_TESTS)
   add_subdirectory(test)
 endif()
 
-include(GNUInstallDirs)
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  COMPONENT ${PROJECT_NAME})
+install(TARGETS ${PROJECT_NAME} COMPONENT ${PROJECT_NAME})

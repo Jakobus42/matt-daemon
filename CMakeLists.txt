@@ -11,7 +11,7 @@ include(cmake/CPM.cmake)
 include(cmake/CompilerWarnings.cmake)
 include(cmake/StaticAnalyzers.cmake)
 include(cmake/Sanitizers.cmake)
-include(cmake/Doxygen.cmake)
+include(cmake/Doc.cmake)
 include(cmake/Config.cmake)
 
 option(MATT_DAEMON_BUILD_TESTS "Build matt-daemon tests" ${BUILD_TESTING})
@@ -22,7 +22,7 @@ option(MATT_DAEMON_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" OFF)
 option(MATT_DAEMON_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" OFF)
 option(MATT_DAEMON_ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
 
-option(MATT_DAEMON_ENABLE_DOXYGEN "Enable doxygen" OFF)
+option(MATT_DAEMON_ENABLE_DOC "Enable documentation" OFF)
 
 add_library(${PROJECT_NAME}_options INTERFACE)
 add_library(${PROJECT_NAME}::options ALIAS ${PROJECT_NAME}_options)
@@ -34,8 +34,8 @@ matt_daemon_enable_sanitizers(
   ${MATT_DAEMON_ENABLE_SANITIZER_THREAD})
 matt_daemon_enable_static_analyses(${MATT_DAEMON_ENABLE_CLANG_TIDY})
 
-if(MATT_DAEMON_ENABLE_DOXYGEN)
-  matt_daemon_enable_doxygen()
+if(MATT_DAEMON_ENABLE_DOC)
+  matt_daemon_enable_doc()
 endif()
 
 if(MATT_DAEMON_BUILD_TESTS)

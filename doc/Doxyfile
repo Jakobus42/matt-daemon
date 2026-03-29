@@ -1,0 +1,14 @@
+PROJECT_NAME      = "matt-daemon"
+INPUT             = ../matt-daemon-rpc/include \
+                    ../matt-daemon-interface/include \
+                    ../matt-daemon/src
+RECURSIVE         = YES
+FILE_PATTERNS     = *.hpp *.h
+EXCLUDE_PATTERNS  = */test/* */build/* */detail/*
+EXTRACT_ALL       = YES
+QUIET             = YES
+
+GENERATE_XML      = YES
+XML_OUTPUT        = build/doxygen/xml
+GENERATE_HTML     = NO
+GENERATE_LATEX    = NO

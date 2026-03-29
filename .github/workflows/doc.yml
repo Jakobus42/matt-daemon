@@ -1,14 +1,12 @@
-name: Docs
+name: Doc
 on:
   push:
     branches: [main]
 
 jobs:
   deploy:
-    name: deploy-doxygen-docs
+    name: deploy-doc
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/jakobus42/clang-p2996-dev:latest
     permissions:
       pages: write
       id-token: write
@@ -18,19 +16,25 @@ jobs:
 
       - name: Install Doxygen
         run: |
-          apt-get update 
-          apt-get install -y doxygen graphviz
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
 
-      - name: Configure
-        run: cmake -B build -DMATT_DAEMON_ENABLE_DOXYGEN=ON
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
 
-      - name: Build Docs
-        run: cmake --build build --target doxygen-docs
+      - name: Install Sphinx
+        run: pip install -r doc/requirements.txt
+
+      - name: Build Doc
+        run: |
+          cmake --preset doc
+          cmake --build --preset doc
 
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build/html
+          path: doc/build/html
 
       - name: Deploy
         uses: actions/deploy-pages@v4
