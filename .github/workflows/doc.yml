@@ -7,6 +7,8 @@ jobs:
   deploy:
     name: deploy-doc
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/jakobus42/clang-p2996-dev:latest
     permissions:
       pages: write
       id-token: write
