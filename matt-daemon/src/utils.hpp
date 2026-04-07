@@ -17,4 +17,11 @@ enum daemonize_success : std::uint8_t { should_die, should_live };
 
 auto daemonize() -> std::expected<daemonize_success, deamonize_error>;
 
+template <class... Ts>
+struct overloaded : Ts... {
+  using Ts::operator()...;
+};
+template <class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
+
 #endif

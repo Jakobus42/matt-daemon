@@ -1,0 +1,5 @@
+[[language]]
+name = "cpp"
+file-types = ["cpp", "cc", "cxx", "hpp", "hcc", "hxx"]
+formatter = { command = 'clang-format', args = ["-assume-filename=main.cpp"] }
+auto-format = true

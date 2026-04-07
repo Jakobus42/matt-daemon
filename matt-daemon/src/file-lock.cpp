@@ -1,16 +1,18 @@
 // This could be replaced with
 // https://www.boost.org/doc/libs/1_35_0/doc/html/boost/interprocess/file_lock.html
 
-#include "file-lock.hpp"
-
 #include <fcntl.h>
 #include <sys/file.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include <expected>
 #include <filesystem>
+#include <print>
 #include <system_error>
 #include <utility>
+
+#include "file-lock.hpp"
 
 namespace matt_daemon {
 
@@ -24,6 +26,28 @@ namespace matt_daemon {
 
   if (::flock(file_desc, LOCK_EX | LOCK_NB) == -1) {
     ::close(file_desc);
+    return std::unexpected{std::error_code{errno, std::generic_category()}};
+  }
+
+  struct stat fd_stat{};
+  auto fstat_res = fstat(file_desc, &fd_stat);
+  if (fstat_res == -1) {
+    ::close(file_desc);
+    return std::unexpected{std::error_code{errno, std::generic_category()}};
+  }
+
+  struct stat file_stat{};
+  auto stat_res = stat(path.c_str(), &file_stat);
+  if (stat_res == -1) {
+    ::close(file_desc);
+    return std::unexpected{std::error_code{errno, std::generic_category()}};
+  }
+
+  std::println("{} => {}", fd_stat.st_ino, file_stat.st_ino);
+
+  if (fd_stat.st_ino != file_stat.st_ino) {
+    ::close(file_desc);
+    // TODO: better error
     return std::unexpected{std::error_code{errno, std::generic_category()}};
   }
 

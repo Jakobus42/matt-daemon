@@ -1,3 +1,4 @@
+#include <fcntl.h>
 #include <gtest/gtest.h>
 
 #include <filesystem>
@@ -74,4 +75,28 @@ TEST(FileLockTest, FileDeletedOnRelease) {
     EXPECT_TRUE(std::filesystem::exists(kLockPath1));
   }
   EXPECT_FALSE(std::filesystem::exists(kLockPath1));
+}
+
+// Testing for race condition which happens due to subject requirement:
+// When the daemon shuts down, the matt_daemon.lock file must be deleted
+// 1. A Locks
+// 2. A Unlocks
+// 3. B Finds Existing Lockfile And Locks
+// 4. A Deletes Lockfile
+// 5. C Creates New Lockfile And Locks
+// 6. Two instances are running!!
+TEST(FileLockTest, FileDeletedAfterLock) {
+  // auto lock1 = FileLock::Acquire(kLockPath1);
+  // ASSERT_TRUE(lock1.has_value()) << lock1.error().message();
+  // EXPECT_TRUE(std::filesystem::exists(kLockPath1));
+
+  // NOLINTNEXTLINE
+  int fd = ::open(kLockPath1, O_CREAT | O_WRONLY | O_TRUNC);
+  ASSERT_NE(fd, -1);
+
+  auto lock2 = FileLock::Acquire(kLockPath1);
+  ASSERT_FALSE(lock2.has_value());
+  EXPECT_EQ(lock2.error(), std::errc::resource_unavailable_try_again);
+
+  std::filesystem::remove(kLockPath1);
 }

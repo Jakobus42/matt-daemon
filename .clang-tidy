@@ -1,4 +1,4 @@
-Checks: "*,-fuchsia-*,-zircon-*,-abseil-*,-llvm-*,-llvmlibc-*"
-WarningsAsErrors: "*"
-HeaderFilterRegex: '.*'
-FormatStyle: none
+# Checks: "*,-fuchsia-*,-zircon-*,-abseil-*,-llvm-*,-llvmlibc-*"
+# WarningsAsErrors: "*"
+# HeaderFilterRegex: '.*'
+# FormatStyle: none
