@@ -1,3 +1,3 @@
 # matt-daemon
 
-See the [documentation](doc/index.md)
+See the [documentation](https://jakobus42.github.io/matt-daemon/)
